@@ -1,9 +1,16 @@
 @import "./reset.scss";
 
+$bg: #333;
+$text: #f1f1f1;
+$textInput: lighten(dodgerblue, 20%);
+$textError: pink;
+
 html,
 body {
   height: 100%;
-  font-family: monospace;
+  font-family: 'Source Code Pro', monospace;
+  background-color: $bg;
+  color: $text;
 }
 
 .d-flex {

@@ -16,7 +16,8 @@
     "url": "https://github.com/manix/the-console/issues"
   },
   "homepage": "https://github.com/manix/the-console#readme",
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "express": "^4.16.3"
   }
 }

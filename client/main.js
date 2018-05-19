@@ -26,27 +26,49 @@
   function log(message) {
     var div = luri.construct({
       class: "message",
-      html: [
-        message
-      ]
+      html: message
     });
 
     c.appendChild(div);
+    div.scrollIntoView();
+
+    if (c.children.length > 500) {
+      c.removeChild(c.firstChild);
+    }
 
     return div;
   };
 
+  var history = [];
+  var hindex = 0;
+
   function send(input) {
-    log("> " + input);
+    log([
+      "> ",
+      {
+        node: "span",
+        class: "input",
+        html: input
+      }
+    ]);
+
+    if (!input) {
+      return Promise.resolve();
+    }
+
+    history.unshift(input);
+    history = history.slice(0, 20);
 
     return new Promise(function (resolve, reject) {
       var command = null;
       var args = [];
       var opts = {};
-      
+
       input = input.replace(/".*?"/g, function (match) {
-        return match.replace(/\s/g, "%20");
+        var replaced = match.replace(/\s/g, "%20");
+        return replaced.substring(1, replaced.length - 1);
       }).split(" ").forEach(function (input) {
+
         if (!input) {
           return;
         }
@@ -66,7 +88,7 @@
 
 
       var xhr = new XMLHttpRequest();
-      
+
       xhr.open("GET", [
         "?route=command&command=" + command,
         args.map(function (arg) {
@@ -111,6 +133,7 @@
   function show() {
     i.parentNode.classList.remove("d-none");
     i.focus();
+    i.scrollIntoView();
   }
 
   document.body.onclick = function () {
@@ -136,12 +159,32 @@
         ref: function (e) {
           i = e;
         },
-        onkeyup: function (e) {
+        onkeydown: function (e) {
           if (e.which === 13) {
-            send(this.value.trim()).then(show).catch(show);
-            this.value = "";
-            this.innerHTML = "";
-            hide();
+            e.preventDefault();
+          }
+        },
+        onkeyup: function (e) {
+          switch (e.which) {
+            case 13:
+              send(this.value.trim()).then(show).catch(show);
+              this.value = "";
+              this.innerHTML = "";
+              hide();
+              hindex = 0;
+              break;
+            case 38:
+              if (hindex > 20 || !history[hindex]) {
+                hindex = history.length - 1;
+              }
+              this.value = history[hindex++] || "";
+              break;
+            case 40:
+              this.value = history[hindex--] || "";
+              if (hindex < 0) {
+                hindex = 0;
+              }
+              break;
           }
         }
       }
