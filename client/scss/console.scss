@@ -1,0 +1,30 @@
+#the-console {
+  display: flex;
+  flex-direction: column;
+  #console {
+    padding: 5px;
+    .message {
+      &:not(:last-child) {
+        padding-bottom: 5px;
+      }
+    }
+  }
+  #input {
+    position: relative;
+    textarea {
+      resize: none;
+      border: none;
+      font-family: monospace;
+      line-height: 15px;
+      padding: 0 5px 5px 5px;
+    }
+    &:before {
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      content: ">";
+      font-family: monospace;
+      line-height: 15px;
+    }
+  }
+}

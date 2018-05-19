@@ -1,0 +1,22 @@
+{
+  "name": "the-console",
+  "version": "1.0.0",
+  "description": "Manage any node app through your browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manix/the-console.git"
+  },
+  "author": "Manix <admin@manix.info>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/manix/the-console/issues"
+  },
+  "homepage": "https://github.com/manix/the-console#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}

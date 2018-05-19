@@ -1,0 +1,25 @@
+@import "./reset.scss";
+
+html,
+body {
+  height: 100%;
+  font-family: monospace;
+}
+
+.d-flex {
+  display: flex
+}
+
+.flex-1 {
+  flex: 1
+}
+
+.text-center {
+  text-align: center
+}
+
+.d-none {
+  display: none
+}
+
+@import "./console.scss";
