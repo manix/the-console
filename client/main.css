@@ -81,6 +81,13 @@ body {
       color: pink; }
   #the-console #input {
     position: relative; }
+    #the-console #input #cwd {
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      content: ">";
+      font-family: 'Source Code Pro', monospace;
+      line-height: 15px; }
     #the-console #input textarea {
       resize: none;
       border: none;
@@ -89,10 +96,3 @@ body {
       padding: 0 5px 5px 5px;
       background-color: #333;
       color: #84c2ff; }
-    #the-console #input:before {
-      position: absolute;
-      top: 1px;
-      left: 5px;
-      content: ">";
-      font-family: 'Source Code Pro', monospace;
-      line-height: 15px; }

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 module.exports = function TheConsole(req, res) {
   switch (req.query.route) {
@@ -35,6 +36,12 @@ module.exports.run = function (port = 9000) {
 module.exports.packages = {
 
 };
+
+module.exports.cwd = path.resolve(".");
+
+module.exports.path = function (p) {
+  return path.join(module.exports.cwd, p);
+}
 
 module.exports.addPackage = function (id, path) {
   module.exports.packages[id] = typeof path === "string" ? {
@@ -88,20 +95,20 @@ function executeCommand(req, res) {
       }
 
       let args = (cmd.arguments || []).map((arg, index) => {
-        argv = decodeURIComponent((req.query.args || [])[index] || "");
+        argv = decodeURIComponent((req.query.args || [])[index] || "") || arg.default;
 
         if (typeof arg.validate === "function") {
           let invalid = arg.validate(argv);
 
           if (invalid) {
             throw invalid.replace("@", cmd.arguments[index].name);
-          } else {
-            return argv;
           }
         }
+
+        return argv;
       })
 
-      return JSON.stringify(cmd.execute.call(null, args, Object.keys(req.query.opts || {}).reduce((options, name) => {
+      return JSON.stringify(cmd.execute.call(module.exports, args, Object.keys(req.query.opts || {}).reduce((options, name) => {
         options[decodeURIComponent(name)] = decodeURIComponent(req.query.opts[name]);
         return options;
       }, {})) || "");

@@ -7,11 +7,9 @@
       &:not(:last-child) {
         padding-bottom: 5px;
       }
-
       .input {
         color: $textInput;
       }
-
       .error {
         color: $textError;
       }
@@ -19,6 +17,14 @@
   }
   #input {
     position: relative;
+    #cwd {
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      content: ">";
+      font-family: 'Source Code Pro', monospace;
+      line-height: 15px;
+    }
     textarea {
       resize: none;
       border: none;
@@ -27,14 +33,6 @@
       padding: 0 5px 5px 5px;
       background-color: $bg;
       color: $textInput;
-    }
-    &:before {
-      position: absolute;
-      top: 1px;
-      left: 5px;
-      content: ">";
-      font-family: 'Source Code Pro', monospace;
-      line-height: 15px;
     }
   }
 }

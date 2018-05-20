@@ -13,4 +13,6 @@ exports.options = {}
 exports.execute = function (args, options) {
   let [name] = args; 
   delete require.cache[require.resolve(name)];
+
+  return name + " was purged";
 }

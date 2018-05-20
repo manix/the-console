@@ -1,5 +1,5 @@
 (function () {
-  var c, i;
+  var c, i, cwd, setIndent;
 
   function greet() {
     function pre(text) {
@@ -29,11 +29,13 @@
       html: message
     });
 
-    c.appendChild(div);
-    div.scrollIntoView();
+    if (c) {
+      c.appendChild(div);
+      div.scrollIntoView();
 
-    if (c.children.length > 500) {
-      c.removeChild(c.firstChild);
+      if (c.children.length > 500) {
+        c.removeChild(c.firstChild);
+      }
     }
 
     return div;
@@ -44,7 +46,7 @@
 
   function send(input) {
     log([
-      "> ",
+      cwd ? cwd.innerHTML.replace("&gt;", ">") : "",
       {
         node: "span",
         class: "input",
@@ -111,7 +113,11 @@
         }
 
         log(definition);
-        outcome();
+        outcome(definition);
+
+        if (cefx[input]) {
+          cefx[input](definition);
+        }
       }
 
       xhr.onload = function () {
@@ -136,70 +142,93 @@
     i.scrollIntoView();
   }
 
-  document.body.onclick = function () {
-    i.focus();
-  };
+  send("cwd").then(function (_cwd) {
 
-  document.body.appendChild(luri.construct({
-    id: "the-console",
-    class: "flex-1",
-    html: [{
-      id: "console",
+    document.body.onclick = function () {
+      i.focus();
+    };
+
+    document.body.appendChild(luri.construct({
+      id: "the-console",
       class: "flex-1",
-      ref: function (e) {
-        c = e;
-        greet();
-      }
-    }, {
-      id: "input",
-      class: "d-flex",
-      html: {
-        node: "textarea",
+      html: [{
+        id: "console",
         class: "flex-1",
         ref: function (e) {
-          i = e;
-        },
-        onkeydown: function (e) {
-          if (e.which === 13) {
-            e.preventDefault();
-          }
-        },
-        onkeyup: function (e) {
-          switch (e.which) {
-            case 13:
-              send(this.value.trim()).then(show).catch(show);
-              this.value = "";
-              this.innerHTML = "";
-              hide();
-              hindex = 0;
-              break;
-            case 38:
-              if (hindex > 20 || !history[hindex]) {
-                hindex = history.length - 1;
-              }
-              this.value = history[hindex++] || "";
-              break;
-            case 40:
-              this.value = history[hindex--] || "";
-              if (hindex < 0) {
-                hindex = 0;
-              }
-              break;
-          }
+          c = e;
+          greet();
         }
+      }, {
+        id: "input",
+        class: "d-flex",
+        html: [{
+          id: "cwd",
+          html: _cwd.html + " > ",
+          ref: function (e) {
+            cwd = e;
+          }
+        }, {
+          node: "textarea",
+          class: "flex-1",
+          ref: function (e) {
+            i = e;
+          },
+          onkeydown: function (e) {
+            if (e.which === 13) {
+              e.preventDefault();
+            }
+          },
+          onkeyup: function (e) {
+            switch (e.which) {
+              case 13:
+                send(this.value.trim()).then(show).catch(show);
+                this.value = "";
+                this.innerHTML = "";
+                hide();
+                hindex = 0;
+                break;
+              case 38:
+                if (hindex > 20 || !history[hindex]) {
+                  hindex = history.length - 1;
+                }
+                this.value = history[hindex++] || "";
+                break;
+              case 40:
+                this.value = history[hindex--] || "";
+                if (hindex < 0) {
+                  hindex = 0;
+                }
+                break;
+            }
+          }
+        }]
+      }]
+    }));
+
+    setIndent = (function (word) {
+      var msg = log(word);
+      msg.style.display = "inline";
+      var char_width = msg.offsetWidth / word.length;
+      msg.remove();
+
+      return function (char_count) {
+        i.style.textIndent = (char_width * char_count) + "px";
       }
-    }]
-  }));
+    })("sample");
 
-  /**
-   * CALIBRATE
-   */
-  (function (word) {
-    var msg = log(word);
-    msg.style.display = "inline";
-    var char_width = msg.offsetWidth / word.length;
-    i.style.textIndent = (char_width * 2) + "px";
-    msg.remove();
-  })("sample");
+    setIndent(_cwd.html.length + 3);
+  })
 
+  // client effects after commands
+  var cefx = {
+    cd: function (r) {
+      if (r.class !== "error") {
+        cwd.innerHTML = r.html + " > ";
+        setIndent(r.html.length + 3);
+      }
+    }, 
+    clear: function () {
+      c.innerHTML = "";
+    }
+  }
 })();
